@@ -29,7 +29,7 @@ $( (git log --format='%s' $(git tag | tail -n 1).. ) \
 
 fi
 
-git tag -l "v${VERISON}"
+git tag -a v${VERSION} -m "tag version ${VVERSION}"
 
 cat >debian/DEBIAN/copyright <<.
 Copyright Dyalog Ltd 1982-$(date +%Y)
