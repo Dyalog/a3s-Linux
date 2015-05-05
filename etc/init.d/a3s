@@ -58,8 +58,6 @@ TERM="xterm"
 #
 # Checks if the configuration files are available and properly setup.
 #
-# Return: 0 if irssid if properly configured, 1 otherwise.
-#
 function checkConfig() {
     # Make sure the configuration file has been created
     if ! [[ -f $configFile ]]; then
