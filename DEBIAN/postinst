@@ -1,5 +1,9 @@
 #!/bin/bash
 
-/usr/sbin/update-rc.d DyalogService defaults
+mkdir -p /var/log/a3s
+
+usradd -r -d /var/spool/a3s -m -s /bin/false -c "APL as a Service" a3s || { echo "Error creating a3s user"; exit 1;}
+
+/usr/sbin/update-rc.d a3s defaults || { echo "Unable to install a3s to default startups" }
 
 exit 0

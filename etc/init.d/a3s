@@ -7,8 +7,8 @@
 # Required-Stop:     $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Start irssi daemon within screen session at boot time
-# Description:       This init script will start an irssi session under screen using the settings provided in /etc/irssid.conf
+# Short-Description: Start A3S daemon at boot time
+# Description:       This init script will start A3S using the settings provided in /etc/a3s/server.conf
 ### END INIT INFO
 
 
@@ -21,12 +21,11 @@ if [ "$START" != "yes" ]; then
 echo "Please configure /etc/default/a3s"
 exit 1
 fi
-### nohup /opt/mdyalog/13.0/64/unicode/mapl +s /tryapl/mserver.dws </dev/null >/tmp/logsout 2>&1 &
 
 # Setup static variables
 
 MAPL="/opt/mdyalog/14.0/64/unicode/mapl"
-configFile='/etc/dyalog/DyalogService.conf'
+configFile='/etc/a3s/server.conf'
 daemonExec="$MAPL"
 daemonArgs=' -bg -ride +s '
 daemonName="$(basename "$daemonExec")"
@@ -88,9 +87,9 @@ function configure() {
     daemonArgs="$daemonArgs $MAPL"
     [[ -n $WORKSPACE ]] && daemonArgs="$daemonArgs $WORKSPACE "
     daemonCommand="$daemonExec $daemonArgs"
-chown -R $DYALOGUSER $WORKINGDIR
-export APLCORENAME="aplcore_*"
-ulimit -c unlimited
+    chown -R $DYALOGUSER $WORKINGDIR
+    export APLCORENAME="aplcore_*"
+    ulimit -c unlimited
 }
 
 
