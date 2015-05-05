@@ -29,7 +29,8 @@ configFile='/etc/a3s/server.conf'
 daemonExec="$MAPL"
 daemonArgs=' -bg -ride +s '
 daemonName="$(basename "$daemonExec")"
-pidFile='/var/run/DyalogService.pid'
+pidFile='/var/run/a3s.pid'
+LOGDIR='/var/log/a3s'
 
 
 #
@@ -102,11 +103,10 @@ function start() {
     start-stop-daemon --start --quiet --oknodo --pidfile "$pidFile" \
         --make-pidfile --chuid $DYALOGUSER --chdir $WORKINGDIR --background \
         --exec "$daemonExec" -- $daemonArgs
-sleep 3
-##THEPID=`ps -A | awk '/dyalog/ {print $1}'`
-THEPID=`ps -A -F | grep "dyalog" | tail -1`
-
-echo $THEPID > $pidFile
+    sleep 3
+    # We have to use ps here because $! will give the PID for start-stop-daemon
+    THEPID=`ps -A -F | grep "dyalog" | tail -1`
+    echo $THEPID > $pidFile
 
 }
 
@@ -118,7 +118,6 @@ echo $THEPID > $pidFile
 #
 function stop() {
     start-stop-daemon --stop --signal 3 --quiet --oknodo --retry 30 --pidfile "$pidFile" 
-##        --exec "$daemonExec" $daemonArgs
 }
 
 
@@ -136,10 +135,6 @@ case "$1" in
         log_daemon_msg "Stopping daemon" "Dyalog Service"
         stop && log_end_msg 0 || log_end_msg $?
         ;;
-    reset|Reset)
-	log_daemon_msg "Resetting daemon" "Dyalog Service"
-	sleep 10 && log_end_msg 0 || log_end_msg $?
-	;;
     restart|Restart)
         log_daemon_msg "Restarting daemon" "Dyalog Service"
         stop
@@ -149,12 +144,13 @@ case "$1" in
     force-reload)
         log_daemon_msg "Restarting daemon" "Dyalog Service"
         stop
+	sleep 10
         start && log_end_msg 0 || log_end_msg $?
         ;;
     status|Status)
         status_of_proc -p "$pidFile" "$daemonExec" screen && exit 0 || exit $?
         ;;
     *)
-        echo "DyalogService (start|stop|restart|force-reload|status|help)"
+        echo "DyalogService (start|stop|restart|force-reload|status)"
         ;;
 esac
