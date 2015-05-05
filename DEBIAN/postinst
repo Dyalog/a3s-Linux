@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/usr/sbin/update-rc.d DyalogService defaults
+
+exit 0

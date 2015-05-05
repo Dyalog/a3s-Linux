@@ -1,0 +1,161 @@
+#!/bin/bash
+#set -x
+
+### BEGIN INIT INFO
+# Provides:          Dyalog APL (TryAPL Workspace)
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start irssi daemon within screen session at boot time
+# Description:       This init script will start an irssi session under screen using the settings provided in /etc/irssid.conf
+### END INIT INFO
+
+
+# Include the LSB library functions
+. /lib/lsb/init-functions
+
+. /etc/default/a3s
+
+if [ "$START" != "yes" ]; then
+echo "Please configure /etc/default/a3s"
+exit 1
+fi
+### nohup /opt/mdyalog/13.0/64/unicode/mapl +s /tryapl/mserver.dws </dev/null >/tmp/logsout 2>&1 &
+
+# Setup static variables
+
+MAPL="/opt/mdyalog/14.0/64/unicode/mapl"
+configFile='/etc/dyalog/DyalogService.conf'
+daemonExec="$MAPL"
+daemonArgs=' -bg -ride +s '
+daemonName="$(basename "$daemonExec")"
+pidFile='/var/run/DyalogService.pid'
+
+
+#
+# Checks if the environment is capable of running the script (such as
+# availability of programs etc).
+#
+# Return: 0 if the environmnt is properly setup for execution of init script, 1
+#         if not all conditions have been met.
+#
+function checkEnvironment() {
+    # Verify that the necessary binaries are available for execution.
+    local binaries=($MAPL)
+
+    for bin in "${binaries[@]}"; do
+        if ! which "$bin" > /dev/null; then
+            log_failure_msg "Binary '$bin' is not available. Please install \
+package containing it."
+            exit 5
+        fi
+    done
+TERM="xterm"
+}
+
+
+#
+# Checks if the configuration files are available and properly setup.
+#
+# Return: 0 if irssid if properly configured, 1 otherwise.
+#
+function checkConfig() {
+    # Make sure the configuration file has been created
+    if ! [[ -f $configFile ]]; then
+        log_failure_msg "Please populate the configuration file '$configFile' \
+before running."
+        exit 6
+    fi
+
+    # Make sure the required options have been set
+    local reqOptions=(user group session)
+    for option in "${reqOptions[@]}"; do
+        if ! grep -q -e "^[[:blank:]]*$option=" "$configFile"; then
+            log_failure_msg "Mandatory option '$option' was not specified in \
+'$configFile'"
+            exit 6
+        fi
+    done
+}
+
+
+#
+# Loads the configuration file and performs any additional configuration steps.
+#
+function configure() {
+    . "$configFile"
+    daemonArgs="$daemonArgs $MAPL"
+    [[ -n $WORKSPACE ]] && daemonArgs="$daemonArgs $WORKSPACE "
+    daemonCommand="$daemonExec $daemonArgs"
+chown -R $DYALOGUSER $WORKINGDIR
+export APLCORENAME="aplcore_*"
+ulimit -c unlimited
+}
+
+
+#
+# Starts the daemon.
+#
+# Return: LSB-compliant code.
+#
+function start() {
+    start-stop-daemon --start --quiet --oknodo --pidfile "$pidFile" \
+        --make-pidfile --chuid $DYALOGUSER --chdir $WORKINGDIR --background \
+        --exec "$daemonExec" -- $daemonArgs
+sleep 3
+##THEPID=`ps -A | awk '/dyalog/ {print $1}'`
+THEPID=`ps -A -F | grep "dyalog" | tail -1`
+
+echo $THEPID > $pidFile
+
+}
+
+
+#
+# Stops the daemon.
+#
+# Return: LSB-compliant code.
+#
+function stop() {
+    start-stop-daemon --stop --signal 3 --quiet --oknodo --retry 30 --pidfile "$pidFile" 
+##        --exec "$daemonExec" $daemonArgs
+}
+
+
+checkEnvironment
+#checkConfig
+configure
+export DYALOGUSER=$DYALOGUSER
+
+case "$1" in
+    start|Start)
+        log_daemon_msg "Starting daemon" "Dyalog Service"
+        start && log_end_msg 0 || log_end_msg $?
+        ;;
+    stop|Stop)
+        log_daemon_msg "Stopping daemon" "Dyalog Service"
+        stop && log_end_msg 0 || log_end_msg $?
+        ;;
+    reset|Reset)
+	log_daemon_msg "Resetting daemon" "Dyalog Service"
+	sleep 10 && log_end_msg 0 || log_end_msg $?
+	;;
+    restart|Restart)
+        log_daemon_msg "Restarting daemon" "Dyalog Service"
+        stop
+	sleep 10
+        start && log_end_msg 0 || log_end_msg $?
+        ;;
+    force-reload)
+        log_daemon_msg "Restarting daemon" "Dyalog Service"
+        stop
+        start && log_end_msg 0 || log_end_msg $?
+        ;;
+    status|Status)
+        status_of_proc -p "$pidFile" "$daemonExec" screen && exit 0 || exit $?
+        ;;
+    *)
+        echo "DyalogService (start|stop|restart|force-reload|status|help)"
+        ;;
+esac
