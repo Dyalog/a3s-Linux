@@ -29,6 +29,8 @@ $( (git log --format='%s' $(git tag | tail -n 1).. ) \
 
 fi
 
+git tag -l "v${VERISON}"
+
 cat >debian/DEBIAN/copyright <<.
 Copyright Dyalog Ltd 1982-$(date +%Y)
 
@@ -99,3 +101,4 @@ cp -R etc debian/
 fakeroot dpkg -b debian/ ./a3s-${VERSION}-all.deb
 
 rm -Rf debian
+
