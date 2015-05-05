@@ -1,10 +1,10 @@
 Package: a3s
 Priority: extra
-Section: libs
+Section: utils
 Installed-Size: 28
 Maintainer: jason@dyalog.com
-Architecture: armhf
-Version: 0.1
+Architecture: all
+Version: 0.2
 Provides: a3s
-Description: APL As A Service for DyalogPi
+Description: APL As A Service
 
