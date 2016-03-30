@@ -73,7 +73,7 @@ set -e
 mkdir -p /var/log/a3s
 
 if ! grep "^a3s" /etc/passwd >/dev/null 2>&1; then
-	useradd -r -d /var/run/a3s -m -s /bin/false a3s
+	useradd -r -d /var/spool/a3s -m -s /bin/false a3s
 else
 	echo "a3s user exists -- skipping"
 fi
