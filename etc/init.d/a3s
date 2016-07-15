@@ -24,7 +24,7 @@ fi
 
 # Setup static variables
 
-MAPL="/opt/mdyalog/14.0/64/unicode/mapl"
+MAPL="/usr/bin/dyalog"
 configFile='/etc/a3s/server.conf'
 daemonExec="$MAPL"
 daemonArgs=' -bg -ride +s '
