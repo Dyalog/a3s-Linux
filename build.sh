@@ -7,6 +7,8 @@ VERSION="${BASE_VERSION}.`git rev-list HEAD --count`"
 
 umask 0022
 
+cp -R etc debian/
+
 if [ "`git tag`" = "" ]; then echo 
 
 cat >debian/DEBIAN/changelog <<.
@@ -96,8 +98,6 @@ exit 0
  
 .
 chmod +x debian/DEBIAN/prerm
-
-cp -R etc debian/
 
 fakeroot dpkg -b debian/ ./a3s-${VERSION}-all.deb
 
