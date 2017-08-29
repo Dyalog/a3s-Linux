@@ -15,7 +15,9 @@
 # Include the LSB library functions
 . /lib/lsb/init-functions
 
+set -o allexport
 . /etc/default/a3s
+set +o allexport
 
 if [ "$START" != "yes" ]; then
 echo "Please configure /etc/default/a3s"

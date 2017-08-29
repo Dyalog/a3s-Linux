@@ -29,10 +29,22 @@ $( (git log --format='%s' $(git tag | tail -n 1).. ) \
 
 .
 
+echo "changelog:"
+cat debian/DEBIAN/changelog
+
+read -s -t 10 -n 1 -p "To edit the changelog, Press any key within 10 seconds..."
+
+if [ $? = 0 ] ; then
+	echo -e "\n"
+	read -s -n 1 -p "Edit ${PWD}/debian/DEBIAN/changelog and press any key when finished"
+else
+	echo "not editing"
+fi
+
 fi
 
 git tag -a v${VERSION} -m "tag version ${VVERSION}"
-git push origin v${VERSION}
+#git push origin v${VERSION}
 
 cat >debian/DEBIAN/copyright <<.
 Copyright Dyalog Ltd 1982-$(date +%Y)
@@ -68,25 +80,7 @@ Description: APL As a Service
 
 .
 
-cat >debian/DEBIAN/postinst <<.
-#!/bin/bash
-set -e
-
-mkdir -p /var/log/a3s
-
-if ! grep "^a3s" /etc/passwd >/dev/null 2>&1; then
-	useradd -r -d /var/spool/a3s -m -s /bin/false a3s
-else
-	echo "a3s user exists -- skipping"
-fi
-
-/usr/sbin/update-rc.d a3s defaults
-
-exit 0
-
-.
-
-chmod +x debian/DEBIAN/postinst
+cp scripts/postinst debian/DEBIAN/postinst
 
 cat >debian/DEBIAN/prerm <<.
 #!/bin/bash

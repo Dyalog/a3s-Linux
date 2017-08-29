@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PID1=`ps -p 1 | grep -v CMD| awk '{print $4}'`
+
+echo PID1 is ${PID1}
+
+##create user to run a3s as:
+if ! grep "^a3s" /etc/passwd >/dev/null 2>&1; then
+        useradd -r -d /var/spool/a3s -m -s /bin/false a3s
+else
+        echo "a3s user exists -- skipping"
+fi
+
+## log directory for a3s
+mkdir -p /var/log/a3s
+
+
+if [[ "${PID1}" = "systemd" ]] || [[ `readlink /sbin/init 2>/dev/null` =~ "systemd" ]]; then
+ ## Systemd
+  echo "Setting up a3s-Linux with Systemd"
+  systemctl daemon-reload
+
+elif [[ `/sbin/init --version 2>/dev/null` =~ upstart ]]; then 
+ ## upstart
+  echo "Setting up a3s-Linux with upstart"
+  /usr/sbin/update-rc.d a3s defaults
+else
+ ## using general /etc/init.d
+  echo using generic init.d;
+  /usr/sbin/update-rc.d a3s defaults
+fi

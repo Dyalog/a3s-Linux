@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -x
+    set -o allexport
+         . /etc/default/a3s
+    set +o allexport
+    export APLCORENAME="aplcore_*"
+    export TERM=xterm
+
+    APLFLAGS="$APLFLAGS +s -bg"
+    if [ "$ENABLERIDE" = "true" ]; then
+        APLFLAGS="$APLFLAGS -ride"
+    fi
+    DYALOG_BINARY=/usr/bin/dyalog
+
+    cd $WORKINGDIR
+
+    if [ "${DYALOGUSER}" != "" ] && [ "${DYALOGUSER}" != "root" ]; then
+        su -c "${DYALOG_BINARY} ${APLFLAGS} ${WORKSPACE}" ${DYALOGUSER}
+    else
+        ${DYALOG_BINARY} ${APLFLAGS} ${WORKSPACE} > ${LOGDIR}${LOGFILE} 2>/dev/null
+    fi
+

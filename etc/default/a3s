@@ -1,5 +1,43 @@
-###
-###
-### Set START=yes for a3s to run at startup
+onfiguration file for Dyalog-As-A-Service init script
+#
+# Mandatory options:
+#
+#    DYALOGUSER - Specify group for running Dyalog APL Session
+#    WORKSPACE  - Name of the workspace that will be loaded & run at startup
+#
+# Non-mandatory options:
+#
+#    PORT    - Allows parsing a PORT number to bind to (This is not required for MiServer
+#                as this is done as part of the MiServer configuration.
+#    args    - Pass additional arguments to Dyalog APL.
+#       You can also assign any variables that you wish to use within your APL Application.
+#
 
-START=no
+ENABLED=no
+
+# Example configuration:
+
+## User to run the APL Session as
+DYALOGUSER='a3s'
+
+## Path that you want to run from, This could be the path that your APL Workspace lives in, or it could be another path on your system
+WORKINGDIR='/var/run/a3s'
+
+## The APL Workspace you wish to run
+WORKSPACE='/path/to/workspace.dws'
+
+## Enable one of the following options if you wish to have RIDE access to your interpreter.
+## ENABLERIDE is a boolean of true or fale and will listen on TCP port 4502
+## RIDE_INIT allows a custom RIDE configuration, See the RIDE documentation for more information here http://docs.dyalog.com/16.0/RIDE%20User%20Guide.pdf
+ENABLERIDE=false
+
+## Maximum Workspace Size
+MAXWS=128M
+
+## MiServer configuration
+
+## MiServer Application to run
+MiServer='MS3' ## Used only when MiServer is used
+
+## Extra flags to launch APL with
+APLFLAGS=""

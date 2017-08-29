@@ -1,0 +1,17 @@
+[Unit]
+Description=Dyalog A3S+Ride Start up on Boot
+After=multi-user.target
+
+[Service]
+EnvironmentFile=/etc/default/a3s
+Type=simple
+User=a3s
+Group=a3s
+WorkingDirectory=/var/run/a3s
+StandardOutput=syslog
+StandardError=null
+ExecStart=/usr/bin/a3s
+
+[Install]
+WantedBy=multi-user.target
+
