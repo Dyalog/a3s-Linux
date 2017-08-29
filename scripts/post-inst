@@ -5,13 +5,14 @@ PID1=`ps -p 1 | grep -v CMD| awk '{print $4}'`
 echo PID1 is ${PID1}
 
 
-if [[ `/sbin/upstart --version 2>/dev/null` =~ upstart ]]; then 
-  echo upstart is installed;
-fi
-if [[ `/sbin/init --version 2>/dev/null` =~ upstart ]]; then 
-  echo using upstart;
-elif [[ `systemctl 2>/dev/null` =~ -\.mount ]]; then 
-  echo using systemd;
-elif [[ -f /etc/init.d/cron && ! -h /etc/init.d/cron ]]; then 
+if [[ "${PID1}" = "systemd" ]] || [[ `readlink /sbin/init 2>/dev/null` =~ "systemd" ]]; then
+ ## Systemd
+  echo "Setting up a3s-Linux with Systemd"
+
+elif [[ `/sbin/init --version 2>/dev/null` =~ upstart ]]; then 
+ ## upstart
+  echo "Setting up a3s-Linux with upstart"
+else
+ ## using general /etc/init
   echo using sysv-init;
 fi
