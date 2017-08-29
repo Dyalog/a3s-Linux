@@ -37,14 +37,15 @@ read -s -t 10 -n 1 -p "To edit the changelog, Press any key within 10 seconds...
 if [ $? = 0 ] ; then
 	echo -e "\n"
 	read -s -n 1 -p "Edit ${PWD}/debian/DEBIAN/changelog and press any key when finished"
+	echo -e "\n"
+	
 else
 	echo "not editing"
 fi
-
 fi
 
 git tag -a v${VERSION} -m "tag version ${VVERSION}"
-#git push origin v${VERSION}
+git push origin v${VERSION}
 
 cat >debian/DEBIAN/copyright <<.
 Copyright Dyalog Ltd 1982-$(date +%Y)
