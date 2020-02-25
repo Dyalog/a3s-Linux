@@ -2,16 +2,16 @@
 
 This set of scripts will allow you to run a Dyalog APL session as a service on a Linux host.
 
-This is a work-in-progress tool, contributions are welcom via a pull request.
+This is a work-in-progress tool, contributions are welcome via a pull requests.
 
 Currently this supports systemd, upstart and init.d files
 
 ## Uses
-This could be used to host a MiServer webside on a linux server, Dyalog uses this script to launch TryAPL on a linux host.
+This could be used to host a MiServer website on a linux server, Dyalog uses this script to launch TryAPL on a linux host.
 
 ## Config
 
-The file */etc/default/a3s* has options for setting up the service, Which workspace to run, which user to run as, etc.
+The file */etc/default/a3s* has options for setting up the service, which workspace to run, which user to run as, etc.
 
 ### Install
 
@@ -32,7 +32,7 @@ $ sudo apt install a3s
 
 This will keep a3s up to date with your normal system updates.
 
-###Alternative install
+### Alternative install
 
 Download the deb file from https://github.com/Dyalog/a3s-Linux/releases and install with:
 
